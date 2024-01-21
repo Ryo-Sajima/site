@@ -50,7 +50,7 @@ async def put_request(owner, repo, path, body, headers):
 # 入力の度に呼び出す関数
 async def get_text(event) -> None:
     # リクエストのヘッダー情報
-    headers = {"Authorization": "token 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", "X-GitHub-Api-Version": "2022-11-28"}
+    headers = {"Authorization": "token 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", "X-GitHub-Api-Version": "2022-11-28"}
 
     sha = await get_sha("Ryo-Sajima", "storage", "test.txt", headers)
 
