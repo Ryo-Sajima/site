@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <title>Githubコミッター</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script type="module">
+        const loading = document.getElementById('loading');
+        addEventListener('py:ready', () => loading.close());
+        loading.showModal();
+    </script>
+</head>
+
+<body>
+    <script type="py" src="./main.py" async></script>
+    <dialog id="loading">
+        <h1>読み込み中…</h1>
+    </dialog>
+
+    <div id="text_area_wrapper">
+        <label for="text_area">入力エリア</label>
+        <textarea name="text_area" id="text_area" cols="30" rows="10"></textarea>
+        <button py-click="get_text" id="button" type="submit">コミット</button>
+        <p id="status"></p>
+    </div>
+</body>
+
+</html>

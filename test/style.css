@@ -1,0 +1,25 @@
+body {
+    text-align: center;
+}
+
+#loading {
+    outline: none;
+    border: none;
+    background: transparent
+}
+
+#text_area_wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#text_area {
+    font-size: 20px;
+    resize: vertical;
+    width: 600px;
+    height: 400px;
+    padding: 10px;
+    margin: 0 auto;
+}
