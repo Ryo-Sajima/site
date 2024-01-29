@@ -4,15 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://unpkg.com/sanitize.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
     <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
-    <title>Githubコミッター</title>
+    <title>ボタン例</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link rel="stylesheet" href="./style.css" />
-    <script type="module">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+    <!-- <script type="module">
         const loading = document.getElementById('loading');
         addEventListener('py:ready', () => loading.close());
         loading.showModal();
-    </script>
+    </script> -->
 </head>
 
 <body>
@@ -21,12 +27,22 @@
         <h1>読み込み中…</h1>
     </dialog>
 
-    <div id="text_area_wrapper">
-        <label for="text_area">入力エリア</label>
-        <textarea name="text_area" id="text_area" cols="30" rows="10"></textarea>
-        <button py-click="get_text" id="button" type="submit">コミット</button>
-        <p id="status"></p>
+    <div class="text-center mt-5">
+        <button type="button" class="btn btn-primary btn-lg btn-block" id="load-button" onclick="btn_click()"
+            py-click="btn_click">
+            <span class="button-text" id="button-text">ボタン</span>
+        </button>
     </div>
+    <div class="text-center mt-5">
+        <button type="button" onclick="btn_done()" id="done-button">
+            完了
+        </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
+        </script>
+    <script type="text/javascript" src="./script.js"></script>
 </body>
 
 </html>
