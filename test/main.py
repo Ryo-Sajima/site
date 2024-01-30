@@ -1,6 +1,6 @@
 import asyncio
 import random
-import btncon
+from . import btncon
 
 import js
 
