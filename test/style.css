@@ -6,18 +6,25 @@
 }
 
 #load-button {
-    --bs-btn-border-radius: 10vmin;
-        height: 30vmin;
-        width: 30vmin;
+    height: 30vmin;
+    width: 30vmin;
     position: relative;
+    --smooth-corners: 3.5;
+    mask-image: paint(smooth-corners);
+    -webkit-mask-image: paint(smooth-corners);
 }
 
-#load-button svg {
+.bi-check-lg {
+    fill: white;
+}
+
+.bi-x-lg {
     height: 20vmin;
     width: 20vmin;
+    fill: white;
 }
 
-#done-button {
+#success-button, #failure-button {
     height: 20vmin;
     width: 20vmin;
     border-radius: 5vmin;
