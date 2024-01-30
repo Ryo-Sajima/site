@@ -4,6 +4,7 @@ import js
 import random
 import pyodide.http
 import json
+import asyncio
 
 print("BTNCON")
 
@@ -88,5 +89,11 @@ class ButtonController:
 
         print(status, text)
 
-    async def send_trigger(self):
-        await self.__create_paste()
+    def send_trigger(self):
+        asyncio.run(self.__create_paste())
+
+    async def __sleep(self, seconds):
+        await asyncio.sleep(seconds)
+
+    def sleep(self, seconds):
+        asyncio.run(self.__sleep(seconds))
