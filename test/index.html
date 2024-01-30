@@ -20,8 +20,8 @@
         loading.showModal();
     </script> -->
     <script>
-        if (CSS && 'paintWorklet' in CSS) CSS.paintWorklet.addModule('https://unpkg.com/smooth-corners')
-      </script>
+            (CSS.paintWorklet || paintWorklet).addModule('smooth-corners.js')
+        </script>
 </head>
 
 <body>
@@ -35,14 +35,6 @@
             <span class="button-text" id="button-text">ボタン</span>
         </button>
     </div>
-    <!-- <div class="text-center mt-5">
-        <button type="button" onclick="btn_success()" id="success-button">
-            成功
-        </button>
-        <button type="button" onclick="btn_failure()" id="failure-button">
-            失敗
-        </button>
-    </div> -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
