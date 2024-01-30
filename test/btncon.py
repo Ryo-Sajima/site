@@ -2,9 +2,10 @@ import base64
 import zlib
 import js
 import random
-import urllib.parse
-import urllib.request
+import pyodide.http
+import json
 
+print("BTNCON")
 
 class ButtonController:
     def __init__(self) -> None:
@@ -59,7 +60,7 @@ class ButtonController:
 
         return (api_dev_key, api_user_key, divisor_int, remainder_int)
 
-    def __create_paste(self):
+    async def __create_paste(self) -> None:
         while True:
             dividend = random.randint(self.__remainder_int + 1, self.__divisor_int)
             if dividend % self.__remainder_int != 0:
@@ -73,23 +74,19 @@ class ButtonController:
 
         paste_a85_str = paste_a85_bytes.decode()
 
-        #######################
-
         post_data = self.__base_data.copy()
         post_data["api_option"] = "paste"
         post_data["api_paste_code"] = paste_a85_str
         post_data["api_paste_private"] = "1"
         post_data["api_paste_expire_date"] = "10M"
 
-        req_data = urllib.parse.urlencode(post_data).encode("ascii")
+        res = await pyodide.http.pyfetch(self.__request_url, method="POST", headers={}, body=post_data)
 
-        req = urllib.request.Request(url=self.__request_url, data=req_data, method="POST")
+        status = res.status
 
-        with urllib.request.urlopen(req) as response:
-            res_bytes = response.read()
+        text = res.text
 
-        res_text = res_bytes.decode()
-        print(res_text)
+        print(status, text)
 
-    def send_trigger(self):
-        self.__create_paste()
+    async def send_trigger(self):
+        await self.__create_paste()

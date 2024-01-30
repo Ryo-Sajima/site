@@ -1,13 +1,13 @@
 import asyncio
 import random
-from . import btncon
+import btncon
 
 import js
 
 btn = btncon.ButtonController()
 
 async def btn_click(event) -> None:
-    btn.send_trigger()
+    await btn.send_trigger()
 
     secs = random.randint(1, 10)
     await asyncio.sleep(secs)
