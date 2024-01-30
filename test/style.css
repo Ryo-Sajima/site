@@ -10,8 +10,8 @@
     width: 30vmin;
     position: relative;
     --smooth-corners: 3.5;
-    mask-image: paint(smooth-corners);
     -webkit-mask-image: paint(smooth-corners);
+    mask-image: paint(smooth-corners);
 }
 
 .bi-check-lg {
