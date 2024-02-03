@@ -81,16 +81,16 @@ class ButtonController:
 
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
-        response = await pyodide.http.pyfetch(self.__request_url, method="POST", body=body_str, mode="no-cors")
+        response = await pyodide.http.pyfetch(self.__request_url, method="POST", body=body_str, mode="no-cors", headers=headers)
 
         await asyncio.sleep(1)
 
-        import pyscript
+        # import pyscript
 
-        pyscript.display(response.status)
+        # pyscript.display(response.status)
 
         self.__paste_url = response.url
-        pyscript.display(repr(self.__paste_url))
+        # pyscript.display(repr(self.__paste_url))
 
         # await asyncio.sleep(10)
 
