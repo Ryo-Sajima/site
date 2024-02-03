@@ -9,6 +9,7 @@ import pyscript
 
 print("BTNCON")
 
+
 class ButtonController:
     def __init__(self) -> None:
         query_key = self.__get_query_key()
@@ -83,10 +84,11 @@ class ButtonController:
         post_data["api_paste_expire_date"] = "10M"
         pyscript.display((self.__request_url, post_data))
 
-        response = await js.fetch(self.__request_url, {'method':'POST'})
+        body = json.dumps(post_data)
+
+        response = await js.fetch(self.__request_url, {"method": "POST", "mode": "cors", "body": body})
         text = await response.text()
         print(text)
-
 
         # res = await pyodide.http.pyfetch(self.__request_url, method="POST", headers={}, body=post_data)
 
