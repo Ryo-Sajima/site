@@ -5,6 +5,9 @@ import random
 import pyodide.http
 import json
 import asyncio
+import nest_asyncio
+
+nest_asyncio.apply()
 
 print("BTNCON")
 
