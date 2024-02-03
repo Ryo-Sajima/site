@@ -5,6 +5,7 @@ import random
 import json
 import asyncio
 import pyscript
+import pyodide.http
 
 
 print("BTNCON")
@@ -84,9 +85,9 @@ class ButtonController:
         post_data["api_paste_expire_date"] = "10M"
         pyscript.display((self.__request_url, post_data))
 
-        body = json.dumps(post_data)
+        body_str = json.dumps(post_data)
 
-        response = await js.fetch(self.__request_url, {"method": "POST", "headers": "{}", "mode": "no-cors", "body": body})
+        response = await pyodide.http.pyfetch(self.__request_url, method="POST", headers="{}", body=body_str)
         text = await response.text()
         print(text)
 
