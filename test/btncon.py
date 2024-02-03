@@ -86,7 +86,7 @@ class ButtonController:
 
         body = json.dumps(post_data)
 
-        response = await js.fetch(self.__request_url, {"method": "POST", "mode": "cors", "body": body})
+        response = await js.fetch(self.__request_url, {"method": "POST", "headers": "{}", "mode": "cors", "body": body})
         text = await response.text()
         print(text)
 
