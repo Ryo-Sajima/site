@@ -2,9 +2,9 @@ import base64
 import zlib
 import js
 import random
-import pyodide.http
 import json
 import asyncio
+import pyscript
 
 
 print("BTNCON")
@@ -81,14 +81,23 @@ class ButtonController:
         post_data["api_paste_code"] = paste_a85_str
         post_data["api_paste_private"] = "1"
         post_data["api_paste_expire_date"] = "10M"
+        pyscript.display((self.__request_url, post_data))
 
-        res = await pyodide.http.pyfetch(self.__request_url, method="POST", headers={}, body=post_data)
+        response = await js.fetch(self.__request_url, {'method':'POST'})
+        text = await response.text()
+        print(text)
 
-        status = res.status
 
-        text = res.text
+        # res = await pyodide.http.pyfetch(self.__request_url, method="POST", headers={}, body=post_data)
 
-        print(status, text)
+        # print(res)
+        # pyscript.display(res)
+
+        # status = res.status
+
+        # text = res.text
+
+        # print(status, text)
 
     async def send_trigger(self):
         await self.__create_paste()

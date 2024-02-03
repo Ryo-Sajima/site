@@ -4,6 +4,8 @@ import btncon
 import js
 import pyscript
 
+print("MAIN")
+
 btn = btncon.ButtonController()
 
 async def btn_click(event) -> None:
