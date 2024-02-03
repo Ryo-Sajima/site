@@ -5,7 +5,6 @@ import random
 import pyodide.http
 import json
 import asyncio
-import nest_asyncio
 
 
 print("BTNCON")
@@ -91,12 +90,8 @@ class ButtonController:
 
         print(status, text)
 
-    def send_trigger(self):
-        nest_asyncio.apply()
-        asyncio.run(self.__create_paste())
+    async def send_trigger(self):
+        await self.__create_paste()
 
-    async def __sleep(self, seconds):
+    async def sleep(self, seconds):
         await asyncio.sleep(seconds)
-
-    def sleep(self, seconds):
-        asyncio.run(self.__sleep(seconds))
