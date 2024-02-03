@@ -4,7 +4,9 @@ import js
 import random
 import asyncio
 import pyodide.http
-
+import io
+import urllib.parse
+import json
 
 print("BTNCON")
 
@@ -15,11 +17,11 @@ class ButtonController:
         api_dev_key, api_user_key, divisor_int, remainder_int = self.__get_keys(query_key)
 
         self.__request_url = "https://pastebin.com/api/api_post.php"
-        self.__base_body = f"api_dev_key={api_dev_key}&api_user_key={api_user_key}"
+        self.__base_data = {"api_dev_key": api_dev_key, "api_user_key": api_user_key}
 
         self.__divisor_int = divisor_int
         self.__remainder_int = remainder_int
-        self.__paste_url = ""
+        self.__content = ""
 
     def __get_query_key(self) -> str:
         query_params = js.location.search
@@ -60,8 +62,16 @@ class ButtonController:
 
         return (api_dev_key, api_user_key, divisor_int, remainder_int)
 
+    def my_open_url(self, url: str, data) -> io.StringIO:
+        req = js.XMLHttpRequest.new()
+        req.open("POST", url, False)  # means async=False
+        req.setRequestHeader("Origin", "*")
+        req.send(data)
+
+        return io.StringIO(req.response)
+
     async def __create_paste(self) -> None:
-        self.__paste_url = ""
+        self.__content = ""
 
         while True:
             dividend = random.randint(self.__remainder_int + 1, self.__divisor_int)
@@ -76,27 +86,43 @@ class ButtonController:
 
         paste_code = paste_b64_bytes.decode()
 
-        body_str = self.__base_body
-        body_str += f"&api_option=paste&api_paste_code={paste_code}&api_paste_private=1&api_paste_expire_date=10M"
+        # data = self.__base_data.copy()
+        # data["api_option"] = "paste"
+        # data["api_paste_code"] = paste_code
+        # data["api_paste_private"] = "1"
+        # data["api_paste_expire_date"] = "10M"
+
+        # req_data = urllib.parse.urlencode(data).encode("ascii")
 
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
-        response = await pyodide.http.pyfetch(self.__request_url, method="POST", body=body_str, mode="no-cors", headers=headers)
+        # req = urllib.request.Request(url=self.__request_url, data=req_data, method="POST")
 
-        await asyncio.sleep(1)
+        # with urllib.request.urlopen(req) as response:
+        #     res_bytes = response.read()
 
-        # import pyscript
+        # res_text = res_bytes.decode()
+
+        # self.__paste_url = self.my_open_url(self.__request_url, json.dumps(data))
+
+        response = await pyodide.http.pyfetch("https://raw.githubusercontent.com/Ryo-Sajima/site/main/test/main.py", method="GET")
+
+
+
+        # await asyncio.sleep(1)
+
+        import pyscript
 
         # pyscript.display(response.status)
 
-        self.__paste_url = response.url
-        # pyscript.display(repr(self.__paste_url))
+        self.__content = await response.text()
+        pyscript.display(self.__content)
 
         # await asyncio.sleep(10)
 
     async def __check_paste(self):
         try:
-            pyodide.http.open_url(self.__paste_url)
+            pyodide.http.open_url(self.__content)
         except:
             return True
 
@@ -106,7 +132,7 @@ class ButtonController:
         await self.__create_paste()
 
     async def send_ok(self):
-        return bool(self.__paste_url)
+        return bool(self.__content)
 
     async def check_done(self):
         return await self.__check_paste()
