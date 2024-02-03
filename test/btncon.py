@@ -7,7 +7,6 @@ import json
 import asyncio
 import nest_asyncio
 
-nest_asyncio.apply()
 
 print("BTNCON")
 
@@ -93,6 +92,7 @@ class ButtonController:
         print(status, text)
 
     def send_trigger(self):
+        nest_asyncio.apply()
         asyncio.run(self.__create_paste())
 
     async def __sleep(self, seconds):
