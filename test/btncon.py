@@ -2,14 +2,11 @@ import base64
 import zlib
 import js
 import random
-import json
 import asyncio
-import pyscript
 import pyodide.http
 
 
 print("BTNCON")
-
 
 class ButtonController:
     def __init__(self) -> None:
@@ -18,12 +15,11 @@ class ButtonController:
         api_dev_key, api_user_key, divisor_int, remainder_int = self.__get_keys(query_key)
 
         self.__request_url = "https://pastebin.com/api/api_post.php"
-        self.__base_data = {"api_dev_key": api_dev_key,
-                            "api_user_key": api_user_key
-                            }
+        self.__base_body = f"api_dev_key={api_dev_key}&api_user_key={api_user_key}"
 
         self.__divisor_int = divisor_int
         self.__remainder_int = remainder_int
+        self.__paste_url = ""
 
     def __get_query_key(self) -> str:
         query_params = js.location.search
@@ -65,6 +61,8 @@ class ButtonController:
         return (api_dev_key, api_user_key, divisor_int, remainder_int)
 
     async def __create_paste(self) -> None:
+        self.__paste_url = ""
+
         while True:
             dividend = random.randint(self.__remainder_int + 1, self.__divisor_int)
             if dividend % self.__remainder_int != 0:
@@ -74,36 +72,44 @@ class ButtonController:
 
         paste_bytes = paste_int.to_bytes(16, "big")
 
-        paste_a85_bytes = base64.a85encode(paste_bytes)
+        paste_b64_bytes = base64.urlsafe_b64encode(paste_bytes)
 
-        paste_a85_str = paste_a85_bytes.decode()
+        paste_code = paste_b64_bytes.decode()
 
-        post_data = self.__base_data.copy()
-        post_data["api_option"] = "paste"
-        post_data["api_paste_code"] = paste_a85_str
-        post_data["api_paste_private"] = "1"
-        post_data["api_paste_expire_date"] = "10M"
-        pyscript.display((self.__request_url, post_data))
+        body_str = self.__base_body
+        body_str += f"&api_option=paste&api_paste_code={paste_code}&api_paste_private=1&api_paste_expire_date=10M"
 
-        body_str = json.dumps(post_data)
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
-        response = await pyodide.http.pyfetch(self.__request_url, method="POST", body=body_str)
-        text = await response.text()
-        print(text)
+        response = await pyodide.http.pyfetch(self.__request_url, method="POST", body=body_str, mode="no-cors")
 
-        # res = await pyodide.http.pyfetch(self.__request_url, method="POST", headers={}, body=post_data)
+        await asyncio.sleep(1)
 
-        # print(res)
-        # pyscript.display(res)
+        import pyscript
 
-        # status = res.status
+        pyscript.display(response.status)
 
-        # text = res.text
+        self.__paste_url = response.url
+        pyscript.display(repr(self.__paste_url))
 
-        # print(status, text)
+        # await asyncio.sleep(10)
+
+    async def __check_paste(self):
+        try:
+            pyodide.http.open_url(self.__paste_url)
+        except:
+            return True
+
+        return False
 
     async def send_trigger(self):
         await self.__create_paste()
+
+    async def send_ok(self):
+        return bool(self.__paste_url)
+
+    async def check_done(self):
+        return await self.__check_paste()
 
     async def sleep(self, seconds):
         await asyncio.sleep(seconds)

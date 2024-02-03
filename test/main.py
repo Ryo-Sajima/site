@@ -1,4 +1,3 @@
-import random
 import btncon
 
 import js
@@ -6,27 +5,22 @@ import pyscript
 
 print("MAIN")
 
-btn = btncon.ButtonController()
-
 async def btn_click(event) -> None:
-    pyscript.display("Sending Trigger")
-    print("Sending Trigger")
+    btn = btncon.ButtonController()
 
     await btn.send_trigger()
 
-    pyscript.display("Sent Trigger")
-    print("Sent Trigger")
 
-    secs = random.randint(1, 10)
-    await btn.sleep(secs)
 
-    pyscript.display(f"Waited {secs} seconds")
-    print(f"Waited {secs} seconds")
-
-    if bool(random.getrandbits(1)):
-        js.btn_success()
-    else:
+    if not await btn.send_ok():
         js.btn_failure()
+        return
 
-    pyscript.display("Changed button")
-    print("Changed button")
+    while True:
+        await btn.sleep(10)
+        is_done = await btn.check_done()
+
+        if is_done:
+            break
+
+    js.btn_success()
