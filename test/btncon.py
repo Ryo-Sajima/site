@@ -90,12 +90,8 @@ class ButtonController:
 
         print(status, text)
 
-    def send_trigger(self):
-        loop = asyncio.get_event_loop()
-        coro = self.__create_paste()
-        loop.run_until_complete(coro)
+    async def send_trigger(self):
+        await self.__create_paste()
 
-    def sleep(self, seconds):
-        loop = asyncio.get_event_loop()
-        coro = asyncio.sleep(seconds)
-        loop.run_until_complete(coro)
+    async def sleep(self, seconds):
+        await asyncio.sleep(seconds)

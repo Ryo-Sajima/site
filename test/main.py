@@ -6,15 +6,15 @@ import pyscript
 
 btn = btncon.ButtonController()
 
-def btn_click(event) -> None:
+async def btn_click(event) -> None:
     pyscript.display("Sending Trigger")
 
-    btn.send_trigger()
+    await btn.send_trigger()
 
     pyscript.display("Sent Trigger")
 
     secs = random.randint(1, 10)
-    btn.sleep(secs)
+    await btn.sleep(secs)
 
     pyscript.display(f"Waited {secs} seconds")
 
