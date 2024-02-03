@@ -3,9 +3,9 @@ import btncon
 
 import js
 
-btn = btncon.ButtonController()
-
 def btn_click(event) -> None:
+
+    btn = btncon.ButtonController()
     btn.send_trigger()
 
     secs = random.randint(1, 10)
