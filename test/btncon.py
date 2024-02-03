@@ -87,7 +87,7 @@ class ButtonController:
 
         body_str = json.dumps(post_data)
 
-        response = await pyodide.http.pyfetch(self.__request_url, method="POST", headers="{}", body=body_str)
+        response = await pyodide.http.pyfetch(self.__request_url, method="POST", body=body_str)
         text = await response.text()
         print(text)
 
