@@ -1,7 +1,6 @@
 import btncon
 
 import js
-import pyscript
 
 print("MAIN")
 
@@ -10,15 +9,13 @@ async def btn_click(event) -> None:
 
     await btn.send_trigger()
 
-
-
-    if not await btn.send_ok():
+    if not btn.is_send_ok():
         js.btn_failure()
         return
 
     while True:
         await btn.sleep(10)
-        is_done = await btn.check_done()
+        is_done = await btn.is_done()
 
         if is_done:
             break

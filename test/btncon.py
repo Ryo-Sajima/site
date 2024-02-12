@@ -1,12 +1,11 @@
-import base64
-import zlib
-import js
-import random
 import asyncio
-import pyodide.http
-import io
-import urllib.parse
+import base64
 import json
+import zlib
+
+import js
+import pyodide.ffi
+import pyodide.http
 
 print("BTNCON")
 
@@ -14,14 +13,16 @@ class ButtonController:
     def __init__(self) -> None:
         query_key = self.__get_query_key()
 
-        api_dev_key, api_user_key, divisor_int, remainder_int = self.__get_keys(query_key)
+        auth = query_key
 
-        self.__request_url = "https://pastebin.com/api/api_post.php"
-        self.__base_data = {"api_dev_key": api_dev_key, "api_user_key": api_user_key}
+        # api_dev_key, api_user_key, divisor_int, remainder_int = self.__get_keys(query_key)
 
-        self.__divisor_int = divisor_int
-        self.__remainder_int = remainder_int
-        self.__content = ""
+        owner = "Ryo-Sajima"
+        repo = "storage"
+        path = "test.txt"
+
+        self.__request_url = f"https://api.github.com/repos/{owner}/{repo}/contents/{path}"
+        self.__headers = {"Authorization": f"token {auth}", "X-GitHub-Api-Version": "2022-11-28", "Content-Type": "application/json"}
 
     def __get_query_key(self) -> str:
         query_params = js.location.search
@@ -62,80 +63,69 @@ class ButtonController:
 
         return (api_dev_key, api_user_key, divisor_int, remainder_int)
 
-    def my_open_url(self, url: str, data) -> io.StringIO:
-        req = js.XMLHttpRequest.new()
-        req.open("POST", url, False)  # means async=False
-        req.setRequestHeader("Origin", "*")
-        req.send(data)
+    async def __get_data(self) -> dict:
+        method = "GET"
 
-        return io.StringIO(req.response)
+        res = await pyodide.http.pyfetch(self.__request_url, method=method, headers=self.__headers)
 
-    async def __create_paste(self) -> None:
-        self.__content = ""
+        self.__status_sha = res.status
 
-        while True:
-            dividend = random.randint(self.__remainder_int + 1, self.__divisor_int)
-            if dividend % self.__remainder_int != 0:
-                break
+        data = await res.json()
 
-        paste_int = self.__divisor_int * dividend + self.__remainder_int
+        return data
 
-        paste_bytes = paste_int.to_bytes(16, "big")
+    async def __store_sha(self):
+        data = await self.__get_data()
 
-        paste_b64_bytes = base64.urlsafe_b64encode(paste_bytes)
+        self.__sha = data["sha"]
 
-        paste_code = paste_b64_bytes.decode()
+        print(self.__sha)
 
-        # data = self.__base_data.copy()
-        # data["api_option"] = "paste"
-        # data["api_paste_code"] = paste_code
-        # data["api_paste_private"] = "1"
-        # data["api_paste_expire_date"] = "10M"
+    def __create_body(self, sha) -> dict:
+        text = "test message"
 
-        # req_data = urllib.parse.urlencode(data).encode("ascii")
+        text_bytes = text.encode()
+        text_b64_bytes = base64.b64encode(text_bytes)
+        text_b64 = text_b64_bytes.decode()
 
-        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        return {"message": "test commit", "content": text_b64, "sha": sha}
 
-        # req = urllib.request.Request(url=self.__request_url, data=req_data, method="POST")
+    async def __push_repo(self):
+        method = "PUT"
+        body = self.__create_body(self.__sha)
+        body_str = json.dumps(body)
 
-        # with urllib.request.urlopen(req) as response:
-        #     res_bytes = response.read()
+        res = await pyodide.http.pyfetch(self.__request_url, method=method, headers=self.__headers, body=body_str)
 
-        # res_text = res_bytes.decode()
+        self.__status_push = res.status
 
-        # self.__paste_url = self.my_open_url(self.__request_url, json.dumps(data))
+        self.__data = await res.json()
 
-        response = await pyodide.http.pyfetch("https://raw.githubusercontent.com/Ryo-Sajima/site/main/test/main.py", method="GET")
+    async def __get_repo_content(self):
+        data = await self.__get_data()
 
+        content_b64 = data["content"]
 
+        content_bytes = base64.b64decode(content_b64)
 
-        # await asyncio.sleep(1)
+        content_raw = content_bytes.decode()
 
-        import pyscript
+        return content_raw.strip()
 
-        # pyscript.display(response.status)
+    async def __check_repo(self):
+        content = await self.__get_repo_content()
 
-        self.__content = await response.text()
-        pyscript.display(self.__content)
-
-        # await asyncio.sleep(10)
-
-    async def __check_paste(self):
-        try:
-            pyodide.http.open_url(self.__content)
-        except:
-            return True
-
-        return False
+        return content == "ok"
 
     async def send_trigger(self):
-        await self.__create_paste()
+        await self.__store_sha()
+        await self.__push_repo()
 
-    async def send_ok(self):
-        return bool(self.__content)
+    def is_send_ok(self):
+        return self.__status_sha == 200 and self.__status_push == 200
 
-    async def check_done(self):
-        return await self.__check_paste()
+    async def is_done(self):
+        return await self.__check_repo()
 
     async def sleep(self, seconds):
         await asyncio.sleep(seconds)
