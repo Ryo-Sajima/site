@@ -1,7 +1,7 @@
 const load_btn = document.getElementById('load-button');
 const btn_txt = document.getElementById('button-text');
 
-const ready = () => {
+function ready() {
     load_btn.disabled = false;
 }
 

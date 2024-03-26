@@ -45,6 +45,8 @@ class ButtonController:
             }
 
             self.__ready = True
+
+            js.ready()
         except:
             self.__ready = False
 
