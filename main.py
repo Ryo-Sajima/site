@@ -14,6 +14,7 @@ btn = btncon.ButtonController()
 if not btn.is_ready():
     js.btn_failure()
 
+
 # ボタン発動時
 async def btn_click(event) -> None:
     # IoTに信号を送る
